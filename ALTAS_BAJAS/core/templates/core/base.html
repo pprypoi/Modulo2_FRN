@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SCRUB{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-mark">S</span>
+                <div>
+                    <strong>SCRUB</strong>
+                    <small>Gestion Escolar</small>
+                </div>
+            </div>
+            <nav class="nav">
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'alumno_list' %}">Alumnos</a>
+                <a href="{% url 'maestro_list' %}">Maestros</a>
+                <a href="{% url 'materia_list' %}">Materias</a>
+                <a href="{% url 'inscripcion_list' %}">Inscripciones</a>
+                <a href="/admin/">Admin Django</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Sistema administrativo escolar</p>
+                    <h1>{% block page_title %}SCRUB{% endblock %}</h1>
+                </div>
+                <span class="system-status">Sistema activo</span>
+            </header>
+
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
