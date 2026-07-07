@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        .login {
+            width: min(360px, calc(100% - 32px));
+            padding: 28px;
+            background: white;
+            border: 1px solid #dde3ea;
+            border-radius: 8px;
+        }
+
+        h1 {
+            margin: 0 0 20px;
+            font-size: 24px;
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            font-weight: 700;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #b8c2cc;
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 10px;
+            border: 0;
+            border-radius: 6px;
+            color: white;
+            background: #1f6feb;
+            cursor: pointer;
+        }
+
+        .error {
+            margin: 0 0 14px;
+            color: #b42318;
+        }
+    </style>
+</head>
+<body>
+    <main class="login">
+        <h1>Iniciar sesion</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <p class="error">Usuario o contrasena incorrectos.</p>
+            {% endif %}
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            <button type="submit">Entrar</button>
+        </form>
+    </main>
+</body>
+</html>
