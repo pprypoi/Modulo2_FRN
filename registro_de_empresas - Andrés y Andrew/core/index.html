@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Login y Administración</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Poppins, sans-serif;
+        }
+        body {
+            background: #eef3f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 900px;
+            height: 550px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 15px 40px rgba(0,0,0,.2);
+        }
+        .left {
+            width: 40%;
+            background: linear-gradient(135deg,#2563eb,#1e40af);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+        }
+        .left h1 {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+        .right {
+            width: 60%;
+            padding: 40px;
+        }
+        .form {
+            display: none;
+        }
+        .form.active {
+            display: block;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border: none;
+            background: #f1f5f9;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .btn-danger { background: #dc2626; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-warn { background: #d97706; }
+        .btn-warn:hover { background: #b45309; }
+        .btn-small { width: auto; padding: 6px 12px; margin: 2px; font-size: 12px; }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .links a {
+            display: block;
+            margin: 10px;
+            cursor: pointer;
+            color: #2563eb;
+            text-decoration: none;
+        }
+        #error {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        /* Dashboard */
+        #dashboard {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            background: #f4f6fa;
+        }
+        .sidebar {
+            position: fixed;
+            width: 240px;
+            height: 100%;
+            background: #1e293b;
+            color: white;
+            padding-top: 20px;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .sidebar a {
+            display: block;
+            padding: 15px 25px;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .sidebar a:hover, .sidebar a.active-nav {
+            background: #334155;
+        }
+        .main {
+            margin-left: 240px;
+            padding: 40px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,.08);
+            text-align: center;
+        }
+        
+        /* Secciones */
+        .section-panel { display: none; margin-top: 30px; }
+        .section-panel.active-panel { display: block; }
+        
+        .flex-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search-box { width: 300px; margin: 0; }
+
+        table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        table th, table td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        table th {
+            background: #2563eb;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN / REGISTRO / RECUPERAR -->
+    <div class="container" id="loginBox">
+        <div class="left">
+            <div>
+                <h1>Bienvenido</h1>
+                <p>Sistema de Administración</p>
+            </div>
+        </div>
+        <div class="right">
+            <!-- RF2: El Sistema Iniciará Sesión -->
+            <div id="login" class="form active">
+                <h2>Iniciar Sesión</h2>
+                <input type="text" id="usuario" placeholder="Usuario">
+                <input type="password" id="password" placeholder="Contraseña">
+                <button onclick="login()">Entrar</button>
+                <p id="error">Usuario o contraseña incorrectos</p>
+                <div class="links">
+                    <a onclick="mostrar('registro')">Crear cuenta</a>
+                    <a onclick="mostrar('recuperar')">Olvidé mi contraseña</a>
+                </div>
+            </div>
+            <div id="registro" class="form">
+                <h2>Registro</h2>
+                <input type="text" placeholder="Nombre">
+                <input type="email" placeholder="Correo">
+                <input type="password" placeholder="Contraseña">
+                <button onclick="mostrar('login')">Registrarme</button>
+                <div class="links">
+                    <a onclick="mostrar('login')">Volver al Login</a>
+                </div>
+            </div>
+            <div id="recuperar" class="form">
+                <h2>Recuperar Contraseña</h2>
+                <input type="email" placeholder="Correo electrónico">
+                <button onclick="mostrar('login')">Enviar enlace</button>
+                <div class="links">
+                    <a onclick="mostrar('login')">Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANEL PRINCIPAL (DASHBOARD) -->
+    <div id="dashboard">
+        <div class="sidebar">
+            <h2>Administrador</h2>
+            <a onclick="cambiarSeccion('inicio')" id="nav-inicio" class="active-nav">Dashboard</a>
+            <a onclick="cambiarSeccion('empresas')" id="nav-empresas">Empresas</a>
+            <a onclick="cambiarSeccion('ofertas')" id="nav-ofertas">Ofertas</a>
+            <a href="#" onclick="salir()">Cerrar sesión</a>
+        </div>
+        
+        <div class="main">
+            <!-- Sección Inicio -->
+            <div id="panel-inicio" class="section-panel active-panel">
+                <h1>Bienvenido</h1>
+                <p>Has iniciado sesión correctamente.</p>
+                <div class="cards">
+                    <div class="card"><h2 id="count-empresas">0</h2>Empresas</div>
+                    <div class="card"><h2 id="count-ofertas">0</h2>Ofertas Activas</div>
+                    <div class="card"><h2>1</h2>Usuarios</div>
+                    <div class="card"><h2>100%</h2>Eficiencia</div>
+                </div>
+            </div>
+
+            <!-- Módulo Empresas (RF1, RF3, RF4, RF5, RF6) -->
+            <div id="panel-empresas" class="section-panel">
+                <div class="flex-header">
+                    <h1>Gestión de Empresas</h1>
+                    <!-- RF4: El Sistema Buscará la Empresa -->
+                    <input type="text" id="buscarEmpresa" class="search-box" placeholder="Buscar empresa..." oninput="renderEmpresas()">
+                </div>
+                
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 id="form-empresa-titulo">Registrar Nueva Empresa</h3>
+                    <input type="hidden" id="empresa-idx">
+                    <input type="text" id="empresa-nombre" placeholder="Nombre de la Empresa">
+                    <input type="text" id="empresa-sector" placeholder="Sector / Rubro">
+                    <input type="text" id="empresa-telefono" placeholder="Teléfono">
+                    <button id="btn-guardar-empresa" onclick="guardarEmpresa()">Guardar Empresa</button>
+                    <button id="btn-cancelar-empresa" class="btn-danger" style="display:none;" onclick="limpiarFormEmpresa()">Cancelar Edición</button>
+                </div>
+
+                <h3>Listado de Empresas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Sector</th>
+                            <th>Acciones (Detalles, Editar, Borrar)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-empresas"></tbody>
+                </table>
+            </div>
+
+            <!-- Módulo Ofertas (RF7, RF8, RF9) -->
+            <div id="panel-ofertas" class="section-panel">
+                <div class="flex-header">
+                    <h1>Gestión de Ofertas</h1>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 id="form-oferta-titulo">Crear Nueva Oferta</h3>
+                    <input type="hidden" id="oferta-idx">
+                    <select id="oferta-empresa"></select>
+                    <input type="text" id="oferta-titulo" placeholder="Título de la Oferta (Ej: Desarrollador Web)">
+                    <input type="text" id="oferta-descripcion" placeholder="Descripción del puesto">
+                    <input type="text" id="oferta-sueldo" placeholder="Sueldo Ofrecido">
+                    <button id="btn-guardar-oferta" onclick="guardarOferta()">Publicar Oferta</button>
+                    <button id="btn-cancelar-oferta" class="btn-danger" style="display:none;" onclick="limpiarFormOferta()">Cancelar Edición</button>
+                </div>
+
+                <h3>Ofertas Activas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Empresa</th>
+                            <th>Título</th>
+                            <th>Descripción</th>
+                            <th>Sueldo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-ofertas"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Arreglos vacíos para que los llenes tú desde la interfaz
+        let empresas = [];
+        let ofertas = [];
+
+        // Manejo de Sesión (RF2)
+        function login(){
+            let usuario = document.getElementById("usuario").value;
+            let password = document.getElementById("password").value;
+            if(usuario === "Proyecto" && password === "12345"){
+                document.getElementById("loginBox").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+                actualizarDashboard();
+            } else {
+                document.getElementById("error").style.display = "block";
+            }
+        }
+
+        function salir(){
+            document.getElementById("dashboard").style.display = "none";
+            document.getElementById("loginBox").style.display = "flex";
+            document.getElementById("usuario").value = "";
+            document.getElementById("password").value = "";
+            document.getElementById("error").style.display = "none";
+            mostrar("login");
+        }
+
+        function mostrar(id){
+            document.querySelectorAll(".form").forEach(f => f.classList.remove("active"));
+            document.getElementById(id).classList.add("active");
+        }
+
+        // Navegación interna del Dashboard
+        function cambiarSeccion(seccion) {
+            document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active-panel'));
+            document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active-nav'));
+            
+            document.getElementById(`panel-${seccion}`).classList.add('active-panel');
+            document.getElementById(`nav-${seccion}`).classList.add('active-nav');
+
+            if(seccion === 'empresas') renderEmpresas();
+            if(seccion === 'ofertas') { renderOfertas(); actualizarSelectEmpresas(); }
+            actualizarDashboard();
+        }
+
+        function actualizarDashboard() {
+            document.getElementById('count-empresas').innerText = empresas.length;
+            document.getElementById('count-ofertas').innerText = ofertas.length;
+        }
+
+        // ==========================================
+        // SECCIÓN EMPRESAS (RF1, RF3, RF4, RF5, RF6)
+        // ==========================================
+        function renderEmpresas() {
+            let filtro = document.getElementById('buscarEmpresa').value.toLowerCase();
+            let tbody = document.getElementById('tabla-empresas');
+            tbody.innerHTML = '';
+
+            if(empresas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#64748b;">No hay empresas registradas aún.</td></tr>`;
+                return;
+            }
+
+            empresas.forEach((emp, index) => {
+                if (emp.nombre.toLowerCase().includes(filtro) || emp.sector.toLowerCase().includes(filtro)) {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><b>${emp.nombre}</b></td>
+                            <td>${emp.sector}</td>
+                            <td>
+                                <button class="btn-small btn-warn" onclick="verDetallesEmpresa(${index})">Ver Detalle</button>
+                                <button class="btn-small" onclick="cargarEmpresaEnForm(${index})">Editar</button>
+                                <button class="btn-small btn-danger" onclick="borrarEmpresa(${index})">Borrar</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        function guardarEmpresa() {
+            let idx = document.getElementById('empresa-idx').value;
+            let nombre = document.getElementById('empresa-nombre').value.trim();
+            let sector = document.getElementById('empresa-sector').value.trim();
+            let telefono = document.getElementById('empresa-telefono').value.trim();
+
+            if(!nombre || !sector) return alert("Por favor, llena los campos básicos (Nombre y Sector).");
+
+            let datosEmpresa = { nombre, sector, telefono };
+
+            if(idx === "") {
+                empresas.push(datosEmpresa); 
+            } else {
+                // Al editar una empresa, si cambia el nombre actualizamos también sus ofertas relacionadas
+                let nombreAnterior = empresas[idx].nombre;
+                ofertas.forEach(of => {
+                    if(of.empresa === nombreAnterior) of.empresa = nombre;
+                });
+                empresas[idx] = datosEmpresa; 
+            }
+
+            limpiarFormEmpresa();
+            renderEmpresas();
+        }
+
+        function cargarEmpresaEnForm(index) {
+            document.getElementById('form-empresa-titulo').innerText = "Editar Empresa";
+            document.getElementById('empresa-idx').value = index;
+            document.getElementById('empresa-nombre').value = empresas[index].nombre;
+            document.getElementById('empresa-sector').value = empresas[index].sector;
+            document.getElementById('empresa-telefono').value = empresas[index].telefono;
+            document.getElementById('btn-cancelar-empresa').style.display = "inline-block";
+        }
+
+        function limpiarFormEmpresa() {
+            document.getElementById('form-empresa-titulo').innerText = "Registrar Nueva Empresa";
+            document.getElementById('empresa-idx').value = "";
+            document.getElementById('empresa-nombre').value = "";
+            document.getElementById('empresa-sector').value = "";
+            document.getElementById('empresa-telefono').value = "";
+            document.getElementById('btn-cancelar-empresa').style.display = "none";
+        }
+
+        function verDetallesEmpresa(index) {
+            let emp = empresas[index];
+            alert(`--- DETALLES DE LA EMPRESA ---\n\nNombre: ${emp.nombre}\nSector: ${emp.sector}\nTeléfono: ${emp.telefono || 'No especificado'}`);
+        }
+
+        function borrarEmpresa(index) {
+            let nombreEmpresa = empresas[index].nombre;
+            if(confirm(`¿Estás seguro de eliminar "${nombreEmpresa}"? Esto también desvinculará sus ofertas.`)) {
+                // Borrar ofertas ligadas a esta empresa
+                ofertas = ofertas.filter(of => of.empresa !== nombreEmpresa);
+                empresas.splice(index, 1);
+                renderEmpresas();
+                actualizarDashboard();
+            }
+        }
+
+        // ==========================================
+        // SECCIÓN OFERTAS (RF7, RF8, RF9)
+        // ==========================================
+        function actualizarSelectEmpresas() {
+            let select = document.getElementById('oferta-empresa');
+            select.innerHTML = '';
+            
+            if(empresas.length === 0) {
+                select.innerHTML = `<option value="">-- Primero registra una empresa --</option>`;
+                return;
+            }
+
+            empresas.forEach(emp => {
+                select.innerHTML += `<option value="${emp.nombre}">${emp.nombre}</option>`;
+            });
+        }
+
+        function renderOfertas() {
+            let tbody = document.getElementById('tabla-ofertas');
+            tbody.innerHTML = '';
+
+            if(ofertas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">No hay ofertas creadas aún.</td></tr>`;
+                return;
+            }
+
+            ofertas.forEach((of, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${of.empresa}</b></td>
+                        <td>${of.titulo}</td>
+                        <td>${of.descripcion}</td>
+                        <td><span style="color:green; font-weight:bold;">${of.sueldo || 'No especificado'}</span></td>
+                        <td>
+                            <button class="btn-small" onclick="cargarOfertaEnForm(${index})">✏️ Editar</button>
+                            <button class="btn-small btn-danger" onclick="borrarOferta(${index})">🗑️ Borrar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function guardarOferta() {
+            let idx = document.getElementById('oferta-idx').value;
+            let empresa = document.getElementById('oferta-empresa').value;
+            let titulo = document.getElementById('oferta-titulo').value.trim();
+            let descripcion = document.getElementById('oferta-descripcion').value.trim();
+            let sueldo = document.getElementById('oferta-sueldo').value.trim();
+
+            if(!empresa) return alert("Debes seleccionar una empresa válida. Si no tienes, ve a la pestaña Empresas.");
+            if(!titulo) return alert("Escribe un título para la oferta.");
+
+            let datosOferta = { empresa, titulo, descripcion, sueldo };
+
+            if(idx === "") {
+                ofertas.push(datosOferta);
+            } else {
+                ofertas[idx] = datosOferta;
+            }
+
+            limpiarFormOferta();
+            renderOfertas();
+        }
+
+        function cargarOfertaEnForm(index) {
+            document.getElementById('form-oferta-titulo').innerText = "Editar Oferta";
+            document.getElementById('oferta-idx').value = index;
+            document.getElementById('oferta-empresa').value = ofertas[index].empresa;
+            document.getElementById('oferta-titulo').value = ofertas[index].titulo;
+            document.getElementById('oferta-descripcion').value = ofertas[index].descripcion;
+            document.getElementById('oferta-sueldo').value = ofertas[index].sueldo;
+            document.getElementById('btn-cancelar-oferta').style.display = "inline-block";
+        }
+
+        function limpiarFormOferta() {
+            document.getElementById('form-oferta-titulo').innerText = "Crear Nueva Oferta";
+            document.getElementById('oferta-idx').value = "";
+            document.getElementById('oferta-titulo').value = "";
+            document.getElementById('oferta-descripcion').value = "";
+            document.getElementById('oferta-sueldo').value = "";
+            document.getElementById('btn-cancelar-oferta').style.display = "none";
+        }
+
+        function borrarOferta(index) {
+            if(confirm(`¿Estás seguro de eliminar la oferta "${ofertas[index].titulo}"?`)) {
+                ofertas.splice(index, 1);
+                renderOfertas();
+                actualizarDashboard();
+            }
+        }
+    </script>
+</body>
+</html>
