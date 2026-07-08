@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+
+{% load static %}
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sistema de Gestión de Horarios</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'horarios/css/style.css' %}">
+
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+
+        <div class="container">
+
+            <a class="navbar-brand" href="#">
+
+                <i class="bi bi-calendar2-week-fill"></i>
+
+                Sistema de Gestión de Horarios
+
+            </a>
+
+            <div class="text-end text-white">
+
+                <strong>Universidad</strong>
+
+                <br>
+
+                Gestión Académica
+
+            </div>
+
+        </div>
+
+    </nav>
+
+    <div class="container mt-4 fade-in">
+
+        <!-- ================= MENSAJES ================= -->
+
+        {% if messages %}
+
+        {% for message in messages %}
+
+        <div class="alert alert-success alert-dismissible fade show shadow">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            {{ message }}
+
+            <button class="btn-close" data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+        {% endfor %}
+
+        {% endif %}
+
+        <!-- ================= ESTADÍSTICAS ================= -->
+
+        <div class="row mb-4">
+
+            <div class="col-md-4">
+
+                <div class="card stat-card">
+
+                    <div class="card-body">
+
+                        <i class="bi bi-calendar-week text-primary"></i>
+
+                        <h5>Total Horarios</h5>
+
+                        <h2>{{ total }}</h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="card stat-card">
+
+                    <div class="card-body">
+
+                        <i class="bi bi-check-circle-fill text-success"></i>
+
+                        <h5>Activos</h5>
+
+                        <h2>{{ activos }}</h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="card stat-card">
+
+                    <div class="card-body">
+
+                        <i class="bi bi-x-circle-fill text-danger"></i>
+
+                        <h5>Inactivos</h5>
+
+                        <h2>{{ inactivos }}</h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= FORMULARIO + TABLA ================= -->
+
+        <div class="row">
+
+            <!-- FORMULARIO -->
+
+            <div class="col-lg-4 mb-4">
+
+                <div class="card">
+
+                    <div class="card-header bg-success text-white">
+
+                        <h4>
+
+                            <i class="bi bi-plus-circle-fill"></i>
+
+                            Registrar Horario
+
+                        </h4>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <form method="POST">
+
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    Día
+
+                                </label>
+
+                                {{ form.dia }}
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    Hora de inicio
+
+                                </label>
+
+                                {{ form.hora_inicio }}
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    Hora de finalización
+
+                                </label>
+
+                                {{ form.hora_fin }}
+
+                            </div>
+
+                            <div class="form-check mb-4">
+
+                                {{ form.estado }}
+
+                                <label class="form-check-label">
+
+                                    Horario activo
+
+                                </label>
+
+                            </div>
+
+                            <button type="submit" class="btn btn-success w-100">
+
+                                <i class="bi bi-floppy-fill"></i>
+
+                                Guardar Horario
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TABLA -->
+
+            <div class="col-lg-8">
+
+                <div class="card">
+
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+
+                        <h4 class="mb-0">
+
+                            <i class="bi bi-table"></i>
+
+                            Horarios Registrados
+
+                        </h4>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <!-- BUSCADOR -->
+
+                        <div class="search-box mb-4">
+
+                            <i class="bi bi-search"></i>
+
+                            <input type="text" id="buscar" class="form-control" placeholder="Buscar por día...">
+
+                        </div>
+
+                        <div class="table-responsive">
+
+                            <table id="tablaHorarios" class="table table-striped table-hover align-middle">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>ID</th>
+
+                                        <th>Día</th>
+
+                                        <th>Hora Inicio</th>
+
+                                        <th>Hora Fin</th>
+
+                                        <th>Estado</th>
+
+                                        <th class="text-center">
+
+                                            Acciones
+
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for horario in horarios %}
+
+                                    <tr>
+
+                                        <td>
+
+                                            {{ horario.id }}
+
+                                        </td>
+
+                                        <td>
+
+                                            <strong>
+
+                                                {{ horario.dia }}
+
+                                            </strong>
+
+                                        </td>
+
+                                        <td>
+
+                                            {{ horario.hora_inicio|time:"H:i" }}
+
+                                        </td>
+
+                                        <td>
+
+                                            {{ horario.hora_fin|time:"H:i" }}
+
+                                        </td>
+
+                                        <td>
+
+                                            {% if horario.estado %}
+
+                                            <span class="badge bg-success">
+
+                                                Activo
+
+                                            </span>
+
+                                            {% else %}
+
+                                            <span class="badge bg-danger">
+
+                                                Inactivo
+
+                                            </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td class="text-center">
+
+                                            <a href="{% url 'editar' horario.id %}" class="btn btn-warning btn-sm">
+
+                                                <i class="bi bi-pencil-fill"></i>
+
+                                                Editar
+
+                                            </a>
+
+                                            <button class="btn btn-danger btn-sm btnEliminar" data-id="{{ horario.id }}"
+                                                data-dia="{{ horario.dia }}">
+
+                                                <i class="bi bi-trash-fill"></i>
+
+                                                Eliminar
+
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% empty %}
+
+                                    <tr>
+
+                                        <td colspan="6" class="text-center text-muted">
+
+                                            No existen horarios registrados.
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endfor %}
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- MODAL ELIMINAR -->
+    <!-- ========================================= -->
+
+    <div class="modal fade" id="modalEliminar" tabindex="-1">
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <div class="modal-header bg-danger text-white">
+
+                    <h5 class="modal-title">
+
+                        <i class="bi bi-trash-fill"></i>
+
+                        Eliminar Horario
+
+                    </h5>
+
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body text-center">
+
+                    <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:70px;"></i>
+
+                    <h4 class="mt-3">
+
+                        ¿Eliminar este horario?
+
+                    </h4>
+
+                    <p class="text-muted">
+
+                        Día:
+
+                        <strong id="diaEliminar"></strong>
+
+                    </p>
+
+                    <p>
+
+                        Esta acción no podrá deshacerse.
+
+                    </p>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+                    <a id="btnConfirmarEliminar" href="#" class="btn btn-danger">
+
+                        <i class="bi bi-trash-fill"></i>
+
+                        Eliminar
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- FOOTER -->
+    <!-- ========================================= -->
+
+    <footer class="text-center mt-5 mb-4">
+
+        <hr>
+
+        <h5>
+
+            <i class="bi bi-calendar2-week-fill"></i>
+
+            Sistema de Gestión de Horarios
+
+        </h5>
+
+    </footer>
+
+    <!-- Bootstrap -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ========================================= -->
+    <!-- BUSCADOR -->
+    <!-- ========================================= -->
+
+    <script>
+
+        const buscador = document.getElementById("buscar");
+
+        buscador.addEventListener("keyup", function () {
+
+            let filtro = buscador.value.toLowerCase();
+
+            let filas = document.querySelectorAll("#tablaHorarios tbody tr");
+
+            filas.forEach(function (fila) {
+
+                let texto = fila.innerText.toLowerCase();
+
+                if (texto.indexOf(filtro) > -1) {
+
+                    fila.style.display = "";
+
+                }
+
+                else {
+
+                    fila.style.display = "none";
+
+                }
+
+            });
+
+        });
+
+    </script>
+
+    <!-- ========================================= -->
+    <!-- MODAL ELIMINAR -->
+    <!-- ========================================= -->
+
+    <script>
+
+        const modalEliminar = new bootstrap.Modal(
+            document.getElementById('modalEliminar')
+        );
+
+        const botonesEliminar = document.querySelectorAll(".btnEliminar");
+
+        botonesEliminar.forEach(function (boton) {
+
+            boton.addEventListener("click", function () {
+
+                let id = this.dataset.id;
+
+                let dia = this.dataset.dia;
+
+                document.getElementById("diaEliminar").innerText = dia;
+
+                document.getElementById("btnConfirmarEliminar").href =
+                    "/horarios/eliminar/" + id + "/";
+
+                modalEliminar.show();
+
+            });
+
+        });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,85 @@
+{% extends 'calificaciones/base.html' %}
+
+{% block title %}Firma de Acta - EduGestión Pro{% endblock %}
+{% block page_title %}Firma Digital de Acta Académica{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 1fr 350px; gap: var(--spacing-lg);">
+    
+    <!-- COLUMNA IZQUIERDA: Mockup del Documento (Diseño Original) -->
+    <div class="card" style="min-height: 600px; display: flex; flex-direction: column; padding: 0;">
+        <div style="background: #e2e8f0; padding: 40px; border-radius: var(--radius-sm); flex: 1; border: 1px dashed var(--outline-variant); display: flex; align-items: center; justify-content: center;">
+            <div style="background: white; width: 100%; max-width: 450px; box-shadow: var(--shadow-lg); padding: 40px; font-family: 'Times New Roman', serif; color: #1e293b;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h2 style="font-size: 1.2rem; text-transform: uppercase; margin: 0;">Acta de Calificaciones</h2>
+                    <p style="font-size: 0.9rem; margin: 5px 0 0 0;">Institución de Excelencia Educativa</p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8rem; margin-bottom: 20px;">
+                    <p style="margin: 0;"><b>Asignatura:</b> {{ curso.nombre }}</p>
+                    <p style="margin: 0;"><b>Sección:</b> {{ curso.seccion }}</p>
+                    <p style="margin: 0;"><b>Periodo:</b> {{ curso.periodo }}</p>
+                    <p style="margin: 0;"><b>Docente:</b> {{ curso.docente.get_full_name }}</p>
+                </div>
+
+                <div style="height: 150px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; font-family: sans-serif; font-size: 12px; color: #94a3b8; margin-bottom: 30px;">
+                    [ Vista previa de calificaciones omitida para resumen ]
+                </div>
+
+                <div style="margin-top: 50px; font-size: 0.7rem; color: #64748b; text-align: center;">
+                    <p style="margin: 0;">Este documento es una representación digital pendiente de firma.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: Formulario funcional de Firma -->
+    <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+        <div class="card">
+            <h3 style="font-size: 1rem; margin-top: 0; margin-bottom: var(--spacing-md);">Panel de Firma</h3>
+            <p style="font-size: 13px; color: var(--on-surface-variant); margin-bottom: var(--spacing-lg);">Para completar el proceso de cierre, dibuje su firma y complete la doble validación.</p>
+            
+            <form method="POST" action="{% url 'digital_signature' curso.id %}">
+                {% csrf_token %}
+                
+                {% if error %}
+                    <div style="background: #fee2e2; color: #991b1b; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px;">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                <!-- Recuadro visual para la firma (Diseño original mantenido) -->
+                <div style="border: 1px solid var(--outline-variant); border-radius: var(--radius-sm); height: 120px; background: #f8fafc; margin-bottom: var(--spacing-md); position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <p style="color: var(--outline-variant); font-size: 12px; margin: 0; user-select: none;">Dibuje su firma aquí</p>
+                    <canvas style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair;"></canvas>
+                </div>
+
+                <div style="margin-bottom: var(--spacing-md);">
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">1. Código SMS / Email</label>
+                    <input type="text" name="codigo_sms" class="input-field" placeholder="123456" required style="text-align: center; letter-spacing: 2px;">
+                    <p style="font-size: 10px; color: var(--success); margin: 4px 0 0 0;">Simulación: {{ codigo_simulado }}</p>
+                </div>
+
+                <div style="margin-bottom: var(--spacing-lg);">
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">2. PIN de Seguridad</label>
+                    <input type="password" name="pin" class="input-field" placeholder="••••" required style="text-align: center; letter-spacing: 2px;">
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn btn-ghost" style="flex: 1; justify-content: center; font-size: 13px;">Limpiar</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 2; justify-content: center; font-size: 13px;">Firmar Acta</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tarjeta Informativa Inferior -->
+        <div class="card" style="background: var(--success-bg); border-color: var(--success);">
+            <div style="display: flex; gap: 12px; align-items: center; color: var(--success);">
+                <span class="material-symbols-outlined">verified</span>
+                <p style="font-size: 13px; font-weight: 600; margin: 0;">Cierre Seguro</p>
+            </div>
+            <p style="font-size: 12px; color: var(--success); margin: 8px 0 0 0;">Una vez firmada, el acta será bloqueada para futuras ediciones y se enviará a servicios escolares.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'calificaciones/base.html' %}
+
+{% block title %}Dashboard - EduGestión Pro{% endblock %}
+{% block page_title %}Dashboard {% if es_docente %}Docente{% else %}Estudiante{% endif %}{% endblock %}
+
+{% block content %}
+<!-- WIDGETS SUPERIORES ORIGINALES -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
+    {% if es_docente %}
+    <div class="card">
+        <p style="font-size: 13px; color: var(--on-surface-variant); font-weight: 600; margin: 0;">ESTUDIANTES ACTIVOS</p>
+        <h3 style="font-size: 2rem; margin: 8px 0;">--</h3>
+        <p style="font-size: 12px; color: var(--success); font-weight: 600; margin: 0;">En tus grupos asignados</p>
+    </div>
+    <div class="card">
+        <p style="font-size: 13px; color: var(--on-surface-variant); font-weight: 600; margin: 0;">CURSOS ASIGNADOS</p>
+        <h3 style="font-size: 2rem; margin: 8px 0;">{{ cursos.count }}</h3>
+        <p style="font-size: 12px; color: var(--on-surface-variant); margin: 0;">Periodo Actual</p>
+    </div>
+    <div class="card">
+        <p style="font-size: 13px; color: var(--on-surface-variant); font-weight: 600; margin: 0;">ACTAS PENDIENTES</p>
+        <h3 style="font-size: 2rem; margin: 8px 0; color: var(--warning);">{{ actas_pendientes }}</h3>
+        {% if actas_pendientes > 0 %}<div class="badge badge-warning">Requiere Firma</div>{% endif %}
+    </div>
+    <div class="card">
+        <p style="font-size: 13px; color: var(--on-surface-variant); font-weight: 600; margin: 0;">PROMEDIO GENERAL</p>
+        <h3 style="font-size: 2rem; margin: 8px 0;">{{ promedio_general }}</h3>
+        <p style="font-size: 12px; color: var(--on-surface-variant); margin: 0;">Escala 0-10</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- LAYOUT DE 2 COLUMNAS ORIGINAL -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-lg);">
+    
+    <!-- COLUMNA IZQUIERDA-->
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
+            <h3 style="font-size: 1.1rem; margin: 0;">Cursos Actuales</h3>
+        </div>
+        
+        <div class="data-table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Asignatura</th>
+                        <th>Sección</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if es_docente %}
+                        {% for curso in cursos %}
+                        <tr>
+                            <td style="font-weight: 600; color: var(--primary);">{{ curso.nombre }}</td>
+                            <td>{{ curso.seccion }}</td>
+                            <td>
+                                {% if curso.acta_firmada %}
+                                    <span class="badge badge-success">Cerrado</span>
+                                {% else %}
+                                    <span class="badge badge-warning">En Curso</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 4px;">
+                                    <a href="{% url 'grade_entry' curso.id %}" class="btn btn-ghost" style="padding: 4px 8px; font-size: 12px;">Entrar</a>
+                                    <a href="{% url 'generar_pdf' curso.id %}" target="_blank" class="btn btn-ghost" style="padding: 4px 8px; font-size: 12px;">PDF</a>
+                                    {% if not curso.acta_firmada %}
+                                        <a href="{% url 'iniciar_firma' curso.id %}" class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;">Firmar</a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        {% for ins in inscripciones %}
+                        <tr>
+                            <td style="font-weight: 600; color: var(--primary);">{{ ins.curso.nombre }}</td>
+                            <td>{{ ins.curso.seccion }}</td>
+                            <td><b>Nota:</b> {{ ins.calificacion_final|default:"N/A" }}</td>
+                            <td>
+                                <a href="{% url 'generar_pdf' ins.curso.id %}" target="_blank" class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;">Ver Boleta PDF</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="font-size: 1.1rem; margin-top: 0; margin-bottom: var(--spacing-lg);">Actividad Reciente</h3>
+        <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+            <div style="display: flex; gap: 12px; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid var(--outline-variant);">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--secondary-container); margin-top: 6px;"></div>
+                <div>
+                    <p style="font-size: 14px; font-weight: 600; margin: 0;">Inicio de Sesión</p>
+                    <p style="font-size: 12px; color: var(--on-surface-variant); margin: 4px 0 0 0;">Acceso al sistema verificado</p>
+                    <p style="font-size: 11px; opacity: 0.6; margin-top: 4px;">Reciente</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: flex-start; padding-bottom: 12px;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); margin-top: 6px;"></div>
+                <div>
+                    <p style="font-size: 14px; font-weight: 600; margin: 0;">Sistema Listo</p>
+                    <p style="font-size: 12px; color: var(--on-surface-variant); margin: 4px 0 0 0;">Módulo de calificaciones operativo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

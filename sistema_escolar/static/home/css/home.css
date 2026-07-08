@@ -1,0 +1,34 @@
+body {
+    background: #f1f5f9;
+}
+
+.login-body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    background: #fff;
+    padding: 32px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 380px;
+}
+
+.home-navbar {
+    background: #002045;
+    padding: 16px 0;
+}
+
+.module-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.module-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Horario</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-warning">
+
+                    <h2 class="text-center">
+                        Editar Horario
+                    </h2>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Día
+                            </label>
+
+                            {{ form.dia }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Hora de inicio
+                            </label>
+
+                            {{ form.hora_inicio }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Hora de finalización
+                            </label>
+
+                            {{ form.hora_fin }}
+
+                        </div>
+
+                        <div class="form-check mb-4">
+
+                            {{ form.estado }}
+
+                            <label class="form-check-label">
+
+                                Activo
+
+                            </label>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-success">
+
+                            Actualizar
+
+                        </button>
+
+                        <a href="{% url 'horarios_index' %}" class="btn btn-secondary">
+
+                            Cancelar
+
+                        </a>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+{% extends 'calificaciones/base.html' %}
+
+{% block title %}Usuarios - EduGestión Pro{% endblock %}
+{% block page_title %}Administración de Usuarios{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xl);">
+        <div style="display: flex; gap: var(--spacing-md); flex: 1; max-width: 500px;">
+            <div style="position: relative; flex: 1;">
+                <span class="material-symbols-outlined" style="position: absolute; left: 10px; top: 10px; font-size: 20px; color: var(--outline);">search</span>
+                <input type="text" class="input-field" placeholder="Buscar por nombre, correo o rol..." style="padding-left: 40px;">
+            </div>
+            <select class="input-field" style="width: 150px;">
+                <option>Todos los Roles</option>
+                <option>Docente</option>
+                <option>Administrador</option>
+                <option>Estudiante</option>
+            </select>
+        </div>
+        <button class="btn btn-primary">
+            <span class="material-symbols-outlined" style="margin-right: 8px; font-size: 18px;">person_add</span>
+            Nuevo Usuario
+        </button>
+    </div>
+
+    <div class="data-table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo Electrónico</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th style="text-align: right;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;">AS</div>
+                            <span style="font-weight: 500;">Arthur Smith</span>
+                        </div>
+                    </td>
+                    <td>a.smith@institucion.edu</td>
+                    <td><span class="badge" style="background: #e0f2fe; color: #0369a1;">Docente</span></td>
+                    <td><span class="badge badge-success">Activo</span></td>
+                    <td style="text-align: right;">
+                        <button class="btn btn-ghost" style="padding: 4px;"><span class="material-symbols-outlined" style="font-size: 20px;">edit</span></button>
+                        <button class="btn btn-ghost" style="padding: 4px; color: var(--error);"><span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #fef3c7; color: #b45309; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;">MJ</div>
+                            <span style="font-weight: 500;">Maria Jones</span>
+                        </div>
+                    </td>
+                    <td>m.jones@institucion.edu</td>
+                    <td><span class="badge" style="background: #fdf2f8; color: #be185d;">Administrador</span></td>
+                    <td><span class="badge badge-success">Activo</span></td>
+                    <td style="text-align: right;">
+                        <button class="btn btn-ghost" style="padding: 4px;"><span class="material-symbols-outlined" style="font-size: 20px;">edit</span></button>
+                        <button class="btn btn-ghost" style="padding: 4px; color: var(--error);"><span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; color: #475569; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;">RK</div>
+                            <span style="font-weight: 500;">Robert King</span>
+                        </div>
+                    </td>
+                    <td>r.king@institucion.edu</td>
+                    <td><span class="badge" style="background: #f1f5f9; color: #475569;">Estudiante</span></td>
+                    <td><span class="badge badge-warning">Suspendido</span></td>
+                    <td style="text-align: right;">
+                        <button class="btn btn-ghost" style="padding: 4px;"><span class="material-symbols-outlined" style="font-size: 20px;">edit</span></button>
+                        <button class="btn btn-ghost" style="padding: 4px; color: var(--error);"><span class="material-symbols-outlined" style="font-size: 20px;">delete</span></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: var(--spacing-lg); display: flex; justify-content: space-between; align-items: center;">
+        <p style="font-size: 13px; color: var(--on-surface-variant);">Mostrando 3 de 142 usuarios</p>
+        <div style="display: flex; gap: 4px;">
+            <button class="btn btn-ghost" style="padding: 4px 8px;">Anterior</button>
+            <button class="btn btn-primary" style="padding: 4px 12px;">1</button>
+            <button class="btn btn-ghost" style="padding: 4px 12px;">2</button>
+            <button class="btn btn-ghost" style="padding: 4px 12px;">3</button>
+            <button class="btn btn-ghost" style="padding: 4px 8px;">Siguiente</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

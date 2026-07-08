@@ -1,0 +1,82 @@
+{% extends 'calificaciones/base.html' %}
+
+{% block title %}Captura de Calificaciones - EduGestión Pro{% endblock %}
+{% block page_title %}Captura de Calificaciones: {{ curso.nombre }}{% endblock %}
+
+{% block content %}
+<div class="card" style="margin-bottom: var(--spacing-lg);">
+    <!-- FORMULARIO FUNCIONAL ENVOLVIENDO EL DISEÑO ORIGINAL -->
+    <form method="POST" action="{% url 'grade_entry' curso.id %}">
+        {% csrf_token %}
+        
+        <!-- ENCABEZADO ORIGINAL -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--spacing-lg);">
+            <div style="display: flex; gap: var(--spacing-xl);">
+                <div>
+                    <p style="font-size: 12px; font-weight: 600; color: var(--on-surface-variant); margin: 0;">PERIODO</p>
+                    <p style="font-weight: 500; margin: 4px 0 0 0;">{{ curso.periodo }}</p>
+                </div>
+                <div>
+                    <p style="font-size: 12px; font-weight: 600; color: var(--on-surface-variant); margin: 0;">SECCIÓN</p>
+                    <p style="font-weight: 500; margin: 4px 0 0 0;">{{ curso.seccion }}</p>
+                </div>
+                <div>
+                    <p style="font-size: 12px; font-weight: 600; color: var(--on-surface-variant); margin: 0;">PROMEDIO SECCIÓN</p>
+                    <p style="font-weight: 500; margin: 4px 0 0 0; color: var(--success);">{{ promedio_seccion }}</p>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: var(--spacing-md);">
+                <a href="{% url 'generar_pdf' curso.id %}" target="_blank" class="btn btn-ghost">
+                    <span class="material-symbols-outlined" style="margin-right: 8px; font-size: 18px;">cloud_download</span>
+                    Ver PDF
+                </a>
+                <button type="submit" class="btn btn-primary" {% if curso.acta_firmada %}disabled{% endif %}>
+                    <span class="material-symbols-outlined" style="margin-right: 8px; font-size: 18px;">save</span>
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+
+        <!-- TABLA ORIGINAL CON INPUTS DINÁMICOS -->
+        <div class="data-table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">Matrícula</th>
+                        <th>Nombre del Estudiante</th>
+                        <th style="width: 120px; text-align: center;">Asistencia (%)</th>
+                        <th style="width: 120px; text-align: center;">Calificación</th>
+                        <th style="width: 250px;">Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ac in alumnos_curso %}
+                    <tr>
+                        <td>{{ ac.alumno.username }}</td>
+                        <td style="font-weight: 500;">{{ ac.alumno.get_full_name }}</td>
+                        <td style="text-align: center;">{{ ac.asistencia_porcentaje }}%</td>
+                        <td style="text-align: center;">
+                            <input type="number" name="cal_{{ ac.id }}" class="input-field" value="{{ ac.calificacion_final|default:'' }}" style="width: 80px; text-align: center; margin: 0 auto; display: block;" min="0" max="10" step="0.1" {% if curso.acta_firmada %}disabled{% endif %}>
+                        </td>
+                        <td>
+                            <input type="text" name="obs_{{ ac.id }}" class="input-field" value="{{ ac.observaciones|default:'' }}" placeholder="Opcional..." {% if curso.acta_firmada %}disabled{% endif %}>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- PIE DE TABLA ORIGINAL -->
+        <div style="margin-top: var(--spacing-lg); display: flex; justify-content: flex-end;">
+            <div style="text-align: right;">
+                <p style="font-size: 13px; color: var(--on-surface-variant); margin: 0;">Estudiantes Registrados: <b>{{ alumnos_curso.count }}</b></p>
+                {% if curso.acta_firmada %}
+                    <p style="font-size: 13px; color: var(--error); margin: 4px 0 0 0; font-weight: bold;">ACTA FIRMADA Y BLOQUEADA</p>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
