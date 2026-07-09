@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Biblioteca{% endblock %}</title>
+</head>
+<body>
+
+    <header>
+        <h1>Biblioteca</h1>
+
+        <nav>
+            <a href="{% url 'lista_libros' %}">Libros</a>
+            |
+            <a href="{% url 'solicitar_prestamo' %}">Solicitar préstamo</a>
+
+            {% if user.is_authenticated %}
+                |
+                <a href="{% url 'perfil_usuario' %}">Mi perfil</a>
+                |
+                <a href="{% url 'logout' %}">Cerrar sesión</a>
+                |
+                Usuario actual: <strong>{{ user.username }}</strong>
+
+                {% if user.is_superuser or user.is_staff or user.perfilusuario.rol == 'ADMIN' or user.perfilusuario.rol == 'Administrador' %}
+                    <br><br>
+                    <strong>Administración:</strong>
+                    <a href="{% url 'crear_libro' %}">Registrar libro</a>
+                    |
+                    <a href="{% url 'lista_ejemplares' %}">Ejemplares</a>
+                    |
+                    <a href="{% url 'lista_solicitudes' %}">Solicitudes</a>
+                    |
+                    <a href="{% url 'registrar_prestamo' %}">Registrar préstamo</a>
+                    |
+                    <a href="{% url 'prestamos_activos' %}">Préstamos activos</a>
+                {% endif %}
+
+            {% else %}
+                |
+                <a href="{% url 'login' %}">Iniciar sesión</a>
+                |
+                <a href="{% url 'registro_usuario' %}">Registrarse</a>
+            {% endif %}
+        </nav>
+
+        <hr>
+    </header>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p><strong>{{ message }}</strong></p>
+        {% endfor %}
+        <hr>
+    {% endif %}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

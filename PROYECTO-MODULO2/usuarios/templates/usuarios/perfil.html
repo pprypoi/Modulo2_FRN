@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi perfil{% endblock %}
+
+{% block content %}
+
+<h2>Mi perfil</h2>
+
+<p><strong>Usuario:</strong> {{ request.user.username }}</p>
+<p><strong>Nombre:</strong> {{ request.user.first_name }} {{ request.user.last_name }}</p>
+<p><strong>Correo:</strong> {{ request.user.email }}</p>
+<p><strong>Teléfono:</strong> {{ perfil.telefono }}</p>
+<p><strong>Dirección:</strong> {{ perfil.direccion }}</p>
+<p><strong>Rol:</strong> {{ perfil.rol }}</p>
+<p><strong>Estado:</strong> {{ perfil.estado }}</p>
+
+<br>
+
+<a href="{% url 'lista_libros' %}">Volver a libros</a>
+|
+<a href="{% url 'logout' %}">Cerrar sesión</a>
+
+{% endblock %}
